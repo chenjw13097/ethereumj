@@ -1194,4 +1194,75 @@ public class TrieTest {
             System.out.println((System.nanoTime() - s) / 1_000_000 + " ms, root: " + (System.nanoTime() - s1) / 1_000_000 + " ms");
         }
     }
+
+
+    @Test
+    public void testRootIsNull() {
+        TrieImpl trie = new TrieImpl();
+
+        // 根哈希:=空字节数组->RLP编码->SHA3编码
+        System.out.println(Hex.toHexString(trie.getRootHash()));
+    }
+
+    @Test
+    public void testRootIsLeafNode() {
+        TrieImpl trie = new TrieImpl();
+        trie.put(Hex.decode("2ea895f3d445"), Hex.decode("0001"));
+
+        System.out.println(Hex.toHexString(trie.getRootHash()));
+    }
+
+    @Test
+    public void testRootIsExtendNode() {
+        TrieImpl trie = new TrieImpl();
+        trie.put(Hex.decode("2ea895f3d445"), Hex.decode("0001"));
+        trie.put(Hex.decode("2ea89544ef21"), Hex.decode("0002"));
+
+        System.out.println(Hex.toHexString(trie.getRootHash()));
+    }
+
+    @Test
+    public void testRootIsBranchNode() {
+        TrieImpl trie = new TrieImpl();
+
+        // 根的子女结点为扩展结点
+        // 扩展结点包含的Key部分，可以多个字符，也可以只有一个字符，比如将ea895换为3
+        trie.put(Hex.decode("2ea895f3d445"), Hex.decode("0001"));
+        trie.put(Hex.decode("2ea89544ef21"), Hex.decode("0002"));
+
+        // 根的子女结点为叶子结点
+        trie.put(Hex.decode("578948ff2de8"), Hex.decode("0003"));
+
+        // 根的子女结点为分支结点
+        // 非根的分支结点可以指向值
+        trie.put(Hex.decode("1ef3d445"), Hex.decode("0004"));
+//        trie.put(Hex.decode("1e44ef21"), Hex.decode("0005"));
+        trie.put(Hex.decode("1e"), Hex.decode("0006"));
+        trie.put(Hex.decode("1244ef21"), Hex.decode("0007"));
+
+        System.out.println(Hex.toHexString(trie.getRootHash()));
+    }
+
+    @Test
+    public void testRootIsBranchNode12() {
+        TrieImpl trie = new TrieImpl();
+
+        // 根的子女结点为扩展结点
+        // 扩展结点包含的Key部分，可以多个字符，也可以只有一个字符，比如将ea895换为3
+        trie.put(Hex.decode("2ea895f3d445"), Hex.decode("0001"));
+        trie.put(Hex.decode("2ea89544ef21"), Hex.decode("0002"));
+
+        // 根的子女结点为叶子结点
+        trie.put(Hex.decode("578948ff2de8"), Hex.decode("0003"));
+
+        // 根的子女结点为分支结点
+        // 非根的分支结点可以指向值
+        trie.put(Hex.decode("eef3d445"), Hex.decode("0004"));
+        trie.put(Hex.decode("ee44ef21"), Hex.decode("0005"));
+        trie.put(Hex.decode("ee"), Hex.decode("0006"));
+        trie.put(Hex.decode("e244ef21"), Hex.decode("0007"));
+
+        System.out.println(Hex.toHexString(trie.getRootHash()));
+    }
+
 }
